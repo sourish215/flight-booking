@@ -1,0 +1,7 @@
+{
+  "name": "flight-booking-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for flight booking application",
+  "type": "module",
+  "private": true
+}
