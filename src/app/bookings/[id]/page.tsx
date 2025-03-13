@@ -35,8 +35,6 @@ export default async function BookingDetailsPage({
 }: {
   params: { id: string };
 }) {
-  const bookingParams = await Promise.resolve(params);
-
   const supabase = createServerComponentClient<Database>({
     cookies: () => cookies(),
   });
@@ -45,7 +43,7 @@ export default async function BookingDetailsPage({
   const { data: booking, error } = await supabase
     .from("bookings")
     .select("*")
-    .eq("id", bookingParams.id)
+    .eq("id", params.id)
     .single<Booking>();
 
   if (error || !booking) {
