@@ -30,11 +30,11 @@ interface Booking {
   updated_at: string;
 }
 
-export default async function BookingDetailsPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+type PageProps = {
+  params: Record<string, string>;
+};
+
+export default async function BookingDetailsPage({ params }: PageProps) {
   const supabase = createServerComponentClient<Database>({
     cookies: () => cookies(),
   });
