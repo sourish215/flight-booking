@@ -1,4 +1,22 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlightBooker
+
+FlightBooker is a modern web application for booking flight tickets online. It provides a streamlined experience for users to search, compare, and book flights across multiple airlines.
+
+## Features
+
+- **User Authentication**: Secure sign-up and sign-in with email verification
+- **Profile Management**: User profile creation and management
+- **Flight Search**: Search for flights based on origin, destination, date, and passenger count
+- **Booking Management**: View and manage your flight bookings
+- **Responsive Design**: Optimized experience across desktop, tablet, and mobile devices
+- **Secure Payments**: Integration with payment processing (placeholder)
+
+## Technology Stack
+
+- **Frontend**: Next.js, React, Tailwind CSS
+- **Backend**: Supabase (Authentication, Database)
+- **State Management**: React Context API
+- **Styling**: Tailwind CSS for responsive design
 
 ## Getting Started
 
@@ -16,9 +34,14 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This application requires Supabase for authentication and database functionality. Make sure to set up the following environment variables:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
 
 ## Learn More
 
@@ -26,8 +49,6 @@ To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
