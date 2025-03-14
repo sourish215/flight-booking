@@ -17,11 +17,11 @@ export default function BookingClientActions({
   };
 
   return (
-    <div className="flex flex-wrap gap-2 justify-end">
+    <div className="flex flex-row flex-wrap gap-2 justify-end">
       {/* Print button */}
       <button
         onClick={handlePrint}
-        className="px-4 py-2 cursor-pointer border border-gray-300 text-gray-600 rounded hover:bg-gray-50 transition print:hidden flex items-center"
+        className="px-2 py-1 md:px-4 md:py-2 cursor-pointer border border-gray-300 text-gray-600 rounded hover:bg-gray-50 transition print:hidden flex items-center"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

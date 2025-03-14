@@ -61,7 +61,7 @@ export default function CancelBooking({
       <button
         onClick={() => setIsConfirmOpen(true)}
         disabled={!canCancel}
-        className={`px-4 py-2 cursor-pointer disabled:cursor-not-allowed rounded transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
+        className={`px-2 py-1 md:px-4 md:py-2 cursor-pointer disabled:cursor-not-allowed rounded transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
           canCancel
             ? "bg-red-600 text-white hover:bg-red-700"
             : "bg-gray-300 text-gray-500 cursor-not-allowed"

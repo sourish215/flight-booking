@@ -159,7 +159,7 @@ async function BookingDetails({ bookingId }: { bookingId: string }) {
           {/* You could add a separate Supabase query for flight details here */}
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-y-3 md:flex-row items-start justify-between md:items-center">
           <div>
             <span className="text-gray-600">Total Price:</span>
             <span className="ml-2 text-gray-600 text-2xl font-bold">
