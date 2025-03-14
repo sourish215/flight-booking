@@ -48,11 +48,58 @@ interface Flight {
 
 export default function BookingsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [authVerified, setAuthVerified] = useState(false);
+
+  // Enhanced function to verify authentication status
+  const verifyAuth = async () => {
+    console.log("Verifying auth status...");
+    try {
+      if (!user) {
+        console.log("No user in AuthContext, checking Supabase session...");
+        // Double-check with Supabase directly
+        const supabase = createClientComponentClient();
+        const { data, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.error("Error getting session:", sessionError);
+          throw new Error("Failed to verify authentication status");
+        }
+
+        if (data.session) {
+          console.log(
+            "Session found in Supabase but not in AuthContext, waiting for sync...",
+            data.session
+          );
+          // Give AuthContext some time to sync
+          setTimeout(() => {
+            setAuthVerified(true);
+            fetchBookings();
+          }, 1000);
+          return;
+        } else {
+          console.log("No session found in Supabase either");
+          setError("Please sign in to view your bookings");
+          setAuthVerified(true);
+          setLoading(false);
+          return;
+        }
+      }
+
+      console.log("User is authenticated:", user.id);
+      setAuthVerified(true);
+      fetchBookings();
+    } catch (err) {
+      console.error("Error verifying authentication:", err);
+      setError("Error verifying authentication. Please try again.");
+      setAuthVerified(true);
+      setLoading(false);
+    }
+  };
 
   // Function to fetch bookings
   const fetchBookings = async () => {
@@ -104,10 +151,12 @@ export default function BookingsPage() {
     }
   };
 
-  // Fetch bookings when component mounts or filters change
+  // Wait for auth to load, then verify auth status
   useEffect(() => {
-    fetchBookings();
-  }, [user]);
+    if (!authLoading) {
+      verifyAuth();
+    }
+  }, [authLoading, user]);
 
   const filteredBookings = useMemo(() => {
     const filteredBookings = bookings.filter((booking) => {
@@ -136,6 +185,21 @@ export default function BookingsPage() {
     () => bookings.filter((booking) => booking.status === "cancelled").length,
     [bookings]
   );
+
+  // Show loading state when still checking auth
+  if (authLoading || !authVerified) {
+    return (
+      <div className="container mx-auto py-8 px-4">
+        <h1 className="text-3xl font-bold text-white mb-6">My Bookings</h1>
+        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-md animate-pulse">
+          <div className="h-6 bg-gray-300 rounded w-1/4 mb-4"></div>
+          <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-300 rounded w-1/2 mb-6"></div>
+          <div className="h-20 bg-gray-300 rounded mb-4"></div>
+        </div>
+      </div>
+    );
+  }
 
   if (!user && !loading) {
     return (
