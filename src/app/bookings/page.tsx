@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -67,7 +67,7 @@ export default function BookingsPage() {
       const supabase = createClientComponentClient();
 
       // Build the query for bookings
-      let query = supabase
+      const query = supabase
         .from("bookings")
         .select(
           `
@@ -89,11 +89,6 @@ export default function BookingsPage() {
         .eq("user_id", user.id)
         .order("booking_date", { ascending: false });
 
-      // Apply status filter if not "all"
-      if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
-      }
-
       const { data, error: fetchError } = await query;
 
       if (fetchError) {
@@ -112,20 +107,35 @@ export default function BookingsPage() {
   // Fetch bookings when component mounts or filters change
   useEffect(() => {
     fetchBookings();
-  }, [user, statusFilter]);
+  }, [user]);
+
+  const filteredBookings = useMemo(() => {
+    const filteredBookings = bookings.filter((booking) => {
+      if (statusFilter === "all") return true;
+      return booking.status === statusFilter;
+    });
+    return filteredBookings;
+  }, [bookings, statusFilter]);
 
   // Handle sign in redirection
   const handleSignIn = () => {
     router.push("/auth/signin?redirect=/bookings");
   };
 
-  // Get total count of each status
-  const statusCounts = bookings.reduce((acc, booking) => {
-    acc[booking.status] = (acc[booking.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
   const totalCount = bookings.length;
+
+  const confirmedCount = useMemo(
+    () => bookings.filter((booking) => booking.status === "confirmed").length,
+    [bookings]
+  );
+  const pendingCount = useMemo(
+    () => bookings.filter((booking) => booking.status === "pending").length,
+    [bookings]
+  );
+  const cancelledCount = useMemo(
+    () => bookings.filter((booking) => booking.status === "cancelled").length,
+    [bookings]
+  );
 
   if (!user && !loading) {
     return (
@@ -173,7 +183,7 @@ export default function BookingsPage() {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Confirmed ({statusCounts["confirmed"] || 0})
+            Confirmed ({confirmedCount})
           </button>
           <button
             onClick={() => setStatusFilter("pending")}
@@ -183,7 +193,7 @@ export default function BookingsPage() {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Pending ({statusCounts["pending"] || 0})
+            Pending ({pendingCount})
           </button>
           <button
             onClick={() => setStatusFilter("cancelled")}
@@ -193,7 +203,7 @@ export default function BookingsPage() {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Cancelled ({statusCounts["cancelled"] || 0})
+            Cancelled ({cancelledCount})
           </button>
         </div>
       </div>
@@ -261,9 +271,9 @@ export default function BookingsPage() {
       )}
 
       {/* Bookings List */}
-      {!loading && !error && bookings.length > 0 && (
+      {!loading && !error && filteredBookings.length > 0 && (
         <div className="grid grid-cols-1 gap-6">
-          {bookings.map((booking) => {
+          {filteredBookings.map((booking) => {
             // Get flight details if available
             const flight = booking.flight;
             const formattedBookingDate = format(
