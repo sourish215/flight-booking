@@ -1,7 +1,7 @@
 // src/app/bookings/new/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Flight } from "@/types/database.types";
@@ -19,7 +19,30 @@ type Passenger = {
   passport_number?: string;
 };
 
+// Loading fallback component
+function LoadingFallback() {
+  return (
+    <div className="container mx-auto p-6">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+        <div className="space-y-4">
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function NewBookingPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <BookingContent />
+    </Suspense>
+  );
+}
+
+function BookingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, session, loading: authLoading } = useAuth();
@@ -248,28 +271,37 @@ export default function NewBookingPage() {
               <h3 className="font-medium mb-3 text-gray-700">
                 Passenger {index + 1} ({passenger.type})
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Full Name
+                  <label
+                    htmlFor={`name-${index}`}
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Full Name (as on passport/ID)
                   </label>
                   <input
                     type="text"
-                    required
+                    id={`name-${index}`}
                     value={passenger.name}
                     onChange={(e) =>
                       handlePassengerChange(index, "name", e.target.value)
                     }
-                    className="w-full px-3 text-gray-700 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                    className="w-full p-2 border text-gray-600 border-gray-300 rounded"
                   />
                 </div>
-                {passenger.type === "adult" && (
+
+                {passenger.type !== "infant" && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Passport Number (Optional)
+                    <label
+                      htmlFor={`passport-${index}`}
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Passport/ID Number (optional)
                     </label>
                     <input
                       type="text"
+                      id={`passport-${index}`}
                       value={passenger.passport_number || ""}
                       onChange={(e) =>
                         handlePassengerChange(
@@ -278,7 +310,7 @@ export default function NewBookingPage() {
                           e.target.value
                         )
                       }
-                      className="w-full px-3 text-gray-700 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full p-2 border text-gray-600 border-gray-300 rounded"
                     />
                   </div>
                 )}
@@ -288,41 +320,24 @@ export default function NewBookingPage() {
         </div>
 
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl text-gray-700 font-semibold mb-4">
-            Price Summary
-          </h2>
-          <div className="space-y-2 text-gray-600">
-            <p>
-              Adults ({passengerCount.adults} × ${flight.price}) = $
-              {passengerCount.adults * flight.price}
-            </p>
-            {passengerCount.children > 0 && (
-              <p>
-                Children ({passengerCount.children} × ${flight.price}) = $
-                {passengerCount.children * flight.price}
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <p className="text-gray-600 mb-1">
+                Total Passengers: {passengers.length}
               </p>
-            )}
-            <p className="text-lg font-semibold pt-2 border-t">
-              Total: $
-              {flight.price * (passengerCount.adults + passengerCount.children)}
-            </p>
+              <p className="text-2xl text-gray-600 font-bold">
+                Total Price: $
+                {flight.price *
+                  (passengerCount.adults + passengerCount.children)}
+              </p>
+            </div>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition w-full md:w-auto"
+            >
+              Confirm Booking
+            </button>
           </div>
-        </div>
-
-        <div className="flex justify-end space-x-4">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-6 py-2 border rounded hover:bg-gray-100 hover:text-gray-700"
-          >
-            Back
-          </button>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Confirm Booking
-          </button>
         </div>
       </form>
     </div>

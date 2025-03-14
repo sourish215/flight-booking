@@ -7,21 +7,19 @@ import { Flight } from "@/types/database.types";
 
 export const revalidate = 0; // Disable caching for this page
 
-type SearchPageProps = {
-  searchParams: {
-    origin: string;
-    destination: string;
-    departureDate: string;
-    returnDate?: string;
-    adults: string;
-    children: string;
-    infants: string;
-    cabinClass: "Economy" | "Premium Economy" | "Business" | "First";
-    tripType: "one-way" | "round-trip";
-  };
+type FlightSearchParams = {
+  origin: string;
+  destination: string;
+  departureDate: string;
+  returnDate?: string;
+  adults: string;
+  children: string;
+  infants: string;
+  cabinClass: "Economy" | "Premium Economy" | "Business" | "First";
+  tripType: "one-way" | "round-trip";
 };
 
-async function searchFlights(params: SearchPageProps["searchParams"]) {
+async function searchFlights(params: FlightSearchParams) {
   try {
     const supabase = await createServerSupabaseClient();
 
@@ -112,10 +110,19 @@ async function searchFlights(params: SearchPageProps["searchParams"]) {
   }
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
-  // Await searchParams to ensure it's fully loaded
-  const params = await Promise.resolve(searchParams);
+// Splitting the component into two parts to avoid Next.js type issues
+export default async function Page({ searchParams }) {
+  // Await searchParams before accessing properties
+  const resolvedSearchParams = await searchParams;
+  return <SearchPageContent searchParams={resolvedSearchParams} />;
+}
 
+// Main async component that handles the actual implementation
+async function SearchPageContent({
+  searchParams,
+}: {
+  searchParams: FlightSearchParams;
+}) {
   const {
     origin,
     destination,
@@ -126,7 +133,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     children,
     infants,
     cabinClass,
-  } = params;
+  } = searchParams;
 
   return (
     <div className="space-y-6">
@@ -164,7 +171,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       </div>
 
       <Suspense fallback={<FlightSearchSkeleton />}>
-        <FlightResultsContent searchParams={params} />
+        <FlightResultsContent searchParams={searchParams} />
       </Suspense>
     </div>
   );
@@ -173,7 +180,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 async function FlightResultsContent({
   searchParams,
 }: {
-  searchParams: SearchPageProps["searchParams"];
+  searchParams: FlightSearchParams;
 }) {
   const { outboundFlights, returnFlights, error } = await searchFlights(
     searchParams

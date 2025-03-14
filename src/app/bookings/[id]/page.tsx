@@ -30,20 +30,24 @@ interface Booking {
   updated_at: string;
 }
 
-type PageProps = {
-  params: Record<string, string>;
-};
+export default async function Page({ params }) {
+  // Await params before accessing properties
+  const resolvedParams = await params;
+  return <BookingDetails bookingId={resolvedParams.id} />;
+}
 
-export default async function BookingDetailsPage({ params }: PageProps) {
-  const supabase = createServerComponentClient<Database>({
-    cookies: () => cookies(),
-  });
+async function BookingDetails({ bookingId }: { bookingId: string }) {
+  if (!bookingId) {
+    return notFound();
+  }
+
+  const supabase = createServerComponentClient<Database>({ cookies });
 
   // Fetch booking data using Supabase
   const { data: booking, error } = await supabase
     .from("bookings")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", bookingId)
     .single<Booking>();
 
   if (error || !booking) {
