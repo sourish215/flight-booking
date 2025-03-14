@@ -299,7 +299,7 @@ export default function BookingsPage() {
       )}
 
       {/* No Bookings State */}
-      {!loading && !error && bookings.length === 0 && (
+      {!loading && !error && filteredBookings.length === 0 && (
         <div className="bg-white/10 backdrop-blur-sm p-8 rounded-lg shadow-md text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
