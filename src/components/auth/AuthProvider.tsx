@@ -70,12 +70,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string) => {
     console.log("Starting signup process...");
 
+    // Get the base URL based on environment
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+
+    console.log("origin url", window.location.origin);
+
     // Sign up the user with email verification
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/complete-profile`,
+        emailRedirectTo: `${baseUrl}/auth/complete-profile`,
         data: {
           email: email,
           signup_timestamp: new Date().toISOString(),
