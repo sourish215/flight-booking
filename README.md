@@ -2,6 +2,8 @@
 
 FlightBooker is a modern web application for booking flight tickets online. It provides a streamlined experience for users to search, compare, and book flights across multiple airlines.
 
+**Live Demo:** [https://flight-booking-zkcy.vercel.app/](https://flight-booking-zkcy.vercel.app/)
+
 ## Features
 
 - **User Authentication**: Secure sign-up and sign-in with email verification
