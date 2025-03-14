@@ -13,14 +13,14 @@ export const metadata: Metadata = {
   description: "Book flights with ease",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={inter.className}>
+      <body>
         <AuthProvider>
           <div className="min-h-screen flex flex-col">
             <Header />

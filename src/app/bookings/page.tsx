@@ -225,7 +225,7 @@ export default function BookingsPage() {
       <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
 
       {/* Status Filter Tabs */}
-      <div className="mb-6 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
+      <div className="mb-6 border border-gray-800 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setStatusFilter("all")}
