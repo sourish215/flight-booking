@@ -21,7 +21,7 @@ export default function BookingClientActions({
       {/* Print button */}
       <button
         onClick={handlePrint}
-        className="px-4 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50 transition print:hidden flex items-center"
+        className="px-4 py-2 cursor-pointer border border-gray-300 text-gray-600 rounded hover:bg-gray-50 transition print:hidden flex items-center"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -210,7 +210,7 @@ export default function BookingsPage() {
             <p className="mb-4">Please sign in to view your bookings</p>
             <button
               onClick={handleSignIn}
-              className="bg-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 cursor-pointer px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
               Sign In
             </button>
@@ -229,7 +229,7 @@ export default function BookingsPage() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setStatusFilter("all")}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-4 py-2 cursor-pointer rounded-md text-sm font-medium transition-colors ${
               statusFilter === "all"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -239,7 +239,7 @@ export default function BookingsPage() {
           </button>
           <button
             onClick={() => setStatusFilter("confirmed")}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-4 py-2 cursor-pointer rounded-md text-sm font-medium transition-colors ${
               statusFilter === "confirmed"
                 ? "bg-green-600 text-white"
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -249,7 +249,7 @@ export default function BookingsPage() {
           </button>
           <button
             onClick={() => setStatusFilter("pending")}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-4 py-2 cursor-pointer rounded-md text-sm font-medium transition-colors ${
               statusFilter === "pending"
                 ? "bg-yellow-600 text-white"
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -259,7 +259,7 @@ export default function BookingsPage() {
           </button>
           <button
             onClick={() => setStatusFilter("cancelled")}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-4 py-2 cursor-pointer rounded-md text-sm font-medium transition-colors ${
               statusFilter === "cancelled"
                 ? "bg-red-600 text-white"
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -289,7 +289,7 @@ export default function BookingsPage() {
           <p>{error}</p>
           <button
             onClick={fetchBookings}
-            className="mt-2 text-sm text-blue-600 hover:text-blue-700"
+            className="mt-2 text-sm cursor-pointer text-blue-600 hover:text-blue-700"
           >
             Try again
           </button>

@@ -333,7 +333,7 @@ function BookingContent() {
             </div>
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition w-full md:w-auto"
+              className="bg-blue-600 cursor-pointer text-white px-6 py-3 rounded hover:bg-blue-700 transition w-full md:w-auto"
             >
               Confirm Booking
             </button>

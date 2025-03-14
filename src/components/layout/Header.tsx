@@ -125,7 +125,7 @@ export default function Header() {
                     <span>{user.email}</span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
+                      className="h-5 w-5 group-hover:rotate-180 transition-transform duration-200"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
