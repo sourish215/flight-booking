@@ -56,12 +56,12 @@ export default function SignUp() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-md w-full text-white space-y-8">
         <div>
-          <h2 className="text-center text-3xl font-bold text-gray-900">
+          <h2 className="text-center text-3xl font-bold">
             Create your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm">
             Already have an account?{" "}
             <Link
               href="/auth/signin"
@@ -86,10 +86,7 @@ export default function SignUp() {
 
           <div className="rounded-md shadow-sm space-y-4">
             <div>
-              <label
-                htmlFor="fullName"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="fullName" className="block text-sm font-medium">
                 Full Name
               </label>
               <input
@@ -102,10 +99,7 @@ export default function SignUp() {
             </div>
 
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="email" className="block text-sm font-medium">
                 Email address
               </label>
               <input
@@ -119,10 +113,7 @@ export default function SignUp() {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="password" className="block text-sm font-medium">
                 Password
               </label>
               <input
@@ -134,9 +125,7 @@ export default function SignUp() {
                 minLength={8}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
-              <p className="mt-1 text-sm text-gray-500">
-                Must be at least 8 characters long
-              </p>
+              <p className="mt-1 text-sm">Must be at least 8 characters long</p>
             </div>
           </div>
 
@@ -150,13 +139,13 @@ export default function SignUp() {
             </button>
           </div>
 
-          <div className="text-sm text-center text-gray-600">
+          <div className="text-sm text-center">
             By signing up, you agree to our{" "}
-            <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+            <Link href="#" className="text-blue-600 hover:text-blue-500">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-blue-600 hover:text-blue-500">
+            <Link href="#" className="text-blue-600 hover:text-blue-500">
               Privacy Policy
             </Link>
           </div>
