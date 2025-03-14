@@ -190,7 +190,7 @@ export default function BookingsPage() {
   if (authLoading || !authVerified) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-3xl font-bold text-white mb-6">My Bookings</h1>
+        <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
         <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-md animate-pulse">
           <div className="h-6 bg-gray-300 rounded w-1/4 mb-4"></div>
           <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
@@ -205,14 +205,12 @@ export default function BookingsPage() {
     return (
       <div className="container mx-auto py-12 px-4">
         <div className="max-w-2xl mx-auto text-center">
-          <h1 className="text-3xl font-bold text-white mb-6">My Bookings</h1>
+          <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
           <div className="bg-white/10 backdrop-blur-sm p-8 rounded-lg shadow-xl">
-            <p className="text-white mb-4">
-              Please sign in to view your bookings
-            </p>
+            <p className="mb-4">Please sign in to view your bookings</p>
             <button
               onClick={handleSignIn}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
               Sign In
             </button>
@@ -224,7 +222,7 @@ export default function BookingsPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <h1 className="text-3xl font-bold text-white mb-6">My Bookings</h1>
+      <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
 
       {/* Status Filter Tabs */}
       <div className="mb-6 bg-white/10 backdrop-blur-sm p-4 rounded-lg">
@@ -315,10 +313,8 @@ export default function BookingsPage() {
               d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
             />
           </svg>
-          <h3 className="mt-2 text-sm font-medium text-white">
-            No bookings found
-          </h3>
-          <p className="mt-1 text-sm text-gray-300">
+          <h3 className="mt-2 text-sm font-medium">No bookings found</h3>
+          <p className="mt-1 text-sm">
             {statusFilter !== "all"
               ? `You don't have any ${statusFilter} bookings.`
               : "Start by searching for flights and making a booking."}
@@ -359,7 +355,7 @@ export default function BookingsPage() {
               >
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
                   <div>
-                    <div className="text-lg font-semibold text-white">
+                    <div className="text-lg font-semibold">
                       {flight ? (
                         <>
                           {flight.origin} to {flight.destination}
@@ -368,7 +364,7 @@ export default function BookingsPage() {
                         <span>Flight Details</span>
                       )}
                     </div>
-                    <div className="text-sm text-gray-300">
+                    <div className="text-sm">
                       Booked on {formattedBookingDate}
                     </div>
                   </div>
@@ -388,17 +384,15 @@ export default function BookingsPage() {
 
                 <div className="border-t border-gray-800 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm text-gray-400">
-                      Booking Reference
-                    </div>
-                    <div className="text-white">
+                    <div className="text-sm">Booking Reference</div>
+                    <div className="">
                       {booking.id.substring(0, 8).toUpperCase()}
                     </div>
                   </div>
 
                   <div>
-                    <div className="text-sm text-gray-400">Passengers</div>
-                    <div className="text-white">
+                    <div className="text-sm">Passengers</div>
+                    <div className="">
                       {passengerTotal}{" "}
                       {passengerTotal === 1 ? "passenger" : "passengers"}
                     </div>
@@ -407,22 +401,22 @@ export default function BookingsPage() {
                   {flight && (
                     <>
                       <div>
-                        <div className="text-sm text-gray-400">Flight</div>
-                        <div className="text-white">
+                        <div className="text-sm">Flight</div>
+                        <div className="">
                           {flight.airline} • {flight.flight_number}
                         </div>
                       </div>
 
                       <div>
-                        <div className="text-sm text-gray-400">Class</div>
-                        <div className="text-white">{flight.cabin_class}</div>
+                        <div className="text-sm">Class</div>
+                        <div className="">{flight.cabin_class}</div>
                       </div>
                     </>
                   )}
 
                   <div className="sm:col-span-2">
-                    <div className="text-sm text-gray-400">Total Price</div>
-                    <div className="text-xl font-bold text-white">
+                    <div className="text-sm">Total Price</div>
+                    <div className="text-xl font-bold">
                       ${parseFloat(booking.total_price).toFixed(2)}
                     </div>
                   </div>

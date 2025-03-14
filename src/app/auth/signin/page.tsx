@@ -109,7 +109,7 @@ function SignInForm() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="max-w-md text-white w-full space-y-8">
+      <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="text-center text-3xl font-bold ">
             Sign in to your account

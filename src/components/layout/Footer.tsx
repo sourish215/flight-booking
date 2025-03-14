@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -11,7 +11,7 @@ export default function Footer() {
               Your trusted partner for hassle-free flight bookings worldwide.
             </p>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
@@ -21,7 +21,10 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/bookings" className="text-gray-300 hover:text-white">
+                <Link
+                  href="/bookings"
+                  className="text-gray-300 hover:text-white"
+                >
                   My Bookings
                 </Link>
               </li>
@@ -32,7 +35,7 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
             <ul className="space-y-2 text-gray-300">
@@ -42,11 +45,13 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-          <p>&copy; {new Date().getFullYear()} FlightBooker. All rights reserved.</p>
+          <p>
+            &copy; {new Date().getFullYear()} FlightBooker. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

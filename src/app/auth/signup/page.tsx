@@ -56,7 +56,7 @@ export default function SignUp() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="max-w-md w-full text-white space-y-8">
+      <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="text-center text-3xl font-bold">
             Create your account
