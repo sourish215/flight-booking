@@ -74,6 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
 
     console.log("origin url", window.location.origin);
+    console.log("base url", baseUrl);
 
     // Sign up the user with email verification
     const { data, error } = await supabase.auth.signUp({
