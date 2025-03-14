@@ -130,6 +130,7 @@ export default function FlightSearchForm() {
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                 required
               />
+              <span className="text-gray-500 text-sm">Eg: DEL, BLR, BOM</span>
             </div>
 
             <div>
@@ -149,6 +150,7 @@ export default function FlightSearchForm() {
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                 required
               />
+              <span className="text-gray-500 text-sm">Eg: DEL, BLR, BOM</span>
             </div>
           </div>
         </div>
