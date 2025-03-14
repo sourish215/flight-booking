@@ -112,20 +112,61 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     console.log("Signing out...");
 
-    try {
-      const { error } = await supabase.auth.signOut();
+    // Clear local state immediately
+    setUser(null);
+    setSession(null);
 
-      if (error) {
-        console.error("Sign out failed:", error.message);
-        throw error;
+    return new Promise<void>(async (resolve) => {
+      try {
+        // Try Supabase signOut but with a timeout to prevent hanging
+        const signOutPromise = supabase.auth.signOut();
+
+        // Create a timeout promise that resolves after 2 seconds
+        const timeoutPromise = new Promise<void>((timeoutResolve) => {
+          setTimeout(() => {
+            console.log("Sign out timed out, continuing anyway");
+            timeoutResolve();
+          }, 2000);
+        });
+
+        // Race between the actual sign out and the timeout
+        await Promise.race([
+          signOutPromise.then(() => {
+            console.log("Supabase sign out completed");
+          }),
+          timeoutPromise,
+        ]);
+
+        // Clear any Supabase-related items from localStorage
+        if (typeof window !== "undefined") {
+          try {
+            // Find and remove all Supabase-related items
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i);
+              if (key && (key.includes("supabase") || key.includes("sb-"))) {
+                keysToRemove.push(key);
+              }
+            }
+
+            // Remove items we found
+            keysToRemove.forEach((key) => {
+              localStorage.removeItem(key);
+              console.log(`Removed localStorage item: ${key}`);
+            });
+          } catch (e) {
+            console.warn("Error clearing localStorage:", e);
+          }
+        }
+
+        console.log("Sign out process complete");
+        resolve();
+      } catch (err) {
+        console.error("Sign out error:", err);
+        // Resolve anyway to avoid hanging
+        resolve();
       }
-
-      // Check if session is actually cleared
-      const { data: session } = await supabase.auth.getSession();
-      console.log("Session after sign out:", session);
-    } catch (err) {
-      console.error("Sign out error:", err);
-    }
+    });
   };
 
   return (

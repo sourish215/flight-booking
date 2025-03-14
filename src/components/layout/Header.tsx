@@ -3,29 +3,48 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { createSupabaseClient } from "@/lib/supabase/client";
 
 export default function Header() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
-  const supabase = createSupabaseClient();
+  const { user, signOut, session } = useAuth();
 
   const handleSignOut = async () => {
+    console.log("Starting sign-out process...");
+
     try {
-      console.log("Attempting to sign out...");
+      // Add a timeout to prevent hanging
+      const signOutPromise = signOut();
+      const timeoutPromise = new Promise<void>((resolve) => {
+        setTimeout(() => {
+          console.log("Sign-out timed out, continuing with redirect");
+          resolve();
+        }, 3000);
+      });
 
-      await signOut();
+      // Race between the signOut function and our timeout
+      await Promise.race([signOutPromise, timeoutPromise]);
 
-      console.log("User signed out...");
-
-      // Manually refresh session to ensure it's cleared
-      await supabase.auth.refreshSession();
-
-      // Redirect the user after successful sign-out
-      router.replace("/");
-      router.refresh();
+      console.log("Sign-out process finished, redirecting...");
     } catch (err) {
-      console.error("Sign-out failed:", err);
+      console.error("Sign-out error:", err);
+    } finally {
+      // Always redirect, even if there were errors
+      console.log("Executing redirect to home page");
+
+      // First try router navigation
+      try {
+        router.push("/");
+        router.refresh();
+      } catch (e) {
+        console.warn("Router navigation failed:", e);
+      }
+
+      // As a fallback, also use direct navigation with a timeout
+      // This ensures we eventually navigate even if router methods fail
+      setTimeout(() => {
+        console.log("Executing fallback navigation");
+        window.location.href = "/?logout=" + Date.now();
+      }, 500);
     }
   };
 
@@ -46,7 +65,7 @@ export default function Header() {
           >
             Search Flights
           </Link> */}
-          {user && (
+          {session && (
             <Link
               href="/bookings"
               className="text-gray-600 hover:text-blue-600 transition-colors"
@@ -54,7 +73,7 @@ export default function Header() {
               My Bookings
             </Link>
           )}
-          {user ? (
+          {session ? (
             <div className="flex items-center space-x-4">
               <div className="relative group">
                 <button className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors">
