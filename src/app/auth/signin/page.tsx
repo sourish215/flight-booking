@@ -54,11 +54,19 @@ function SignInForm() {
     try {
       await signIn(email, password);
 
-      // Add a small delay to ensure session is properly set
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Add a delay to ensure session is properly set
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Verify session was created
+      const supabase = createSupabaseClient();
+      const { data: sessionData } = await supabase.auth.getSession();
+
+      if (!sessionData.session) {
+        console.error("Session not established after sign-in");
+        throw new Error("Failed to establish session. Please try again.");
+      }
 
       // Check if we need to complete profile first
-      const supabase = createSupabaseClient();
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("full_name")
@@ -76,15 +84,12 @@ function SignInForm() {
         const profileRedirect = `/auth/complete-profile?redirect=${encodeURIComponent(
           redirectTo
         )}`;
-        console.log("Redirecting to complete profile:", profileRedirect);
         router.replace(profileRedirect);
         return;
       }
 
       // Handle the redirect
-      console.log("Profile complete, redirecting to:", redirectTo);
       router.replace(redirectTo);
-
       router.refresh();
     } catch (err) {
       console.error("Sign in error:", err);

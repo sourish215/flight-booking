@@ -10,7 +10,12 @@ export async function middleware(req: NextRequest) {
   // Refresh session if expired - required for Server Components
   const {
     data: { session },
+    error: sessionError,
   } = await supabase.auth.getSession();
+
+  if (sessionError) {
+    console.error("Error getting session in middleware:", sessionError);
+  }
 
   // Protected routes that require authentication
   const protectedPaths = ["/bookings", "/profile"];
@@ -21,8 +26,13 @@ export async function middleware(req: NextRequest) {
   const isBookingPath = req.nextUrl.pathname.startsWith("/bookings/new");
   const isAuthPath = req.nextUrl.pathname.startsWith("/auth/");
 
-  // Skip auth check for auth-related paths
-  if (isAuthPath) {
+  // If user is authenticated and trying to access auth routes, redirect to home
+  if (isAuthPath && session) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  // Skip auth check for auth-related paths for non-authenticated users
+  if (isAuthPath && !session) {
     return res;
   }
 
@@ -34,16 +44,20 @@ export async function middleware(req: NextRequest) {
       "redirect",
       req.nextUrl.pathname + req.nextUrl.search
     );
-    // return NextResponse.redirect(redirectUrl);
+    return NextResponse.redirect(redirectUrl);
   }
 
   // If authenticated but missing profile, redirect to complete profile
   if (session && (isProtectedPath || isBookingPath)) {
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("full_name")
       .eq("id", session.user.id)
       .single();
+
+    if (profileError) {
+      console.error("Error fetching profile:", profileError);
+    }
 
     if (!profile?.full_name) {
       const redirectUrl = new URL("/auth/complete-profile", req.url);
@@ -55,7 +69,14 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  return res;
+  // Set cookies in the response to ensure they're passed back to the client
+  const response = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  });
+
+  return response;
 }
 
 // Ensure the middleware is run for relevant paths

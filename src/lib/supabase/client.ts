@@ -13,11 +13,44 @@ export const createSupabaseClient = () => {
     throw new Error("Missing Supabase environment variables");
   }
 
+  // Get domain for cookie settings
+  const domain =
+    process.env.NODE_ENV === "production"
+      ? process.env.NEXT_PUBLIC_SITE_URL?.replace(/^https?:\/\//, "")
+      : "localhost";
+
   supabaseInstance = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
+      storage: {
+        getItem: (key) => {
+          if (typeof document !== "undefined") {
+            return (
+              document.cookie
+                .split("; ")
+                .find((row) => row.startsWith(`${key}=`))
+                ?.split("=")[1] || null
+            );
+          }
+          return null;
+        },
+        setItem: (key, value) => {
+          if (typeof document !== "undefined") {
+            document.cookie = `${key}=${value}; max-age=${
+              60 * 60 * 24 * 7
+            }; domain=${domain}; path=/; samesite=lax${
+              process.env.NODE_ENV === "production" ? "; secure" : ""
+            }`;
+          }
+        },
+        removeItem: (key) => {
+          if (typeof document !== "undefined") {
+            document.cookie = `${key}=; max-age=0; domain=${domain}; path=/`;
+          }
+        },
+      },
     },
   });
   return supabaseInstance;

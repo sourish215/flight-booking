@@ -37,9 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Listen for auth changes
         const {
           data: { subscription },
-        } = supabase.auth.onAuthStateChange(async (_event, session) => {
-          console.log("Auth state changed:", { event: _event, session });
-
+        } = supabase.auth.onAuthStateChange(async () => {
           // Always get fresh session on auth changes
           const {
             data: { session: freshSession },
@@ -60,21 +58,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [supabase.auth]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) throw error;
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data.session) {
+      throw new Error("Authentication failed. Please try again.");
+    }
+
+    // Explicitly set the session in state
+    setSession(data.session);
+    setUser(data.session.user);
   };
 
   const signUp = async (email: string, password: string) => {
-    console.log("Starting signup process...");
-
     // Get the base URL based on environment
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
-
-    console.log("origin url", window.location.origin);
-    console.log("base url", baseUrl);
 
     // Sign up the user with email verification
     const { data, error } = await supabase.auth.signUp({
@@ -90,7 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (error) {
-      console.error("Signup error:", error);
       if (error.message.includes("User already registered")) {
         throw new Error(
           "An account with this email already exists. " +
@@ -101,11 +104,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (!data.user) {
-      console.error("No user data returned from signup");
       throw new Error("Failed to create user account. Please try again.");
     }
-
-    console.log("User created:", data.user);
 
     // Always throw a verification message
     // This ensures users know they need to verify their email
@@ -116,8 +116,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    console.log("Signing out...");
-
     // Clear local state immediately
     setUser(null);
     setSession(null);
@@ -130,18 +128,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Create a timeout promise that resolves after 2 seconds
         const timeoutPromise = new Promise<void>((timeoutResolve) => {
           setTimeout(() => {
-            console.log("Sign out timed out, continuing anyway");
             timeoutResolve();
           }, 2000);
         });
 
         // Race between the actual sign out and the timeout
-        await Promise.race([
-          signOutPromise.then(() => {
-            console.log("Supabase sign out completed");
-          }),
-          timeoutPromise,
-        ]);
+        await Promise.race([signOutPromise, timeoutPromise]);
 
         // Clear any Supabase-related items from localStorage
         if (typeof window !== "undefined") {
@@ -158,14 +150,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Remove items we found
             keysToRemove.forEach((key) => {
               localStorage.removeItem(key);
-              console.log(`Removed localStorage item: ${key}`);
             });
           } catch (e) {
             console.warn("Error clearing localStorage:", e);
           }
         }
 
-        console.log("Sign out process complete");
         resolve();
       } catch (err) {
         console.error("Sign out error:", err);
