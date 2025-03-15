@@ -43,7 +43,13 @@ async function BookingDetails({ bookingId }: { bookingId: string }) {
     return notFound();
   }
 
-  const supabase = createServerComponentClient<Database>({ cookies });
+  // Create a cookie store instance first
+  const cookieStore = cookies();
+
+  // Create Supabase client with the cookie store
+  const supabase = createServerComponentClient<Database>({
+    cookies: () => cookieStore,
+  });
 
   // Fetch booking data using Supabase
   const { data: booking, error } = await supabase

@@ -66,7 +66,6 @@ export default function FlightList({
   };
 
   const handleBookFlight = async (flightId: string) => {
-    console.log("handleBookFlight called with flightId:", flightId);
     if (isRedirecting || authLoading) return;
     setIsRedirecting(true);
 
@@ -75,8 +74,6 @@ export default function FlightList({
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
-      console.log("Current auth state:", { userId: session?.user?.id });
 
       // Create booking parameters with current search params
       const currentUrl = new URL(window.location.href);
@@ -116,8 +113,6 @@ export default function FlightList({
 
       // If all good, proceed to booking
       router.push(bookingUrl);
-      // router.push("/bookings/new");
-      // console.log("Proceeding to booking");
     } catch (error) {
       console.error("Error during booking:", error);
     } finally {
@@ -142,7 +137,7 @@ export default function FlightList({
           onClick={() => handleSelectFlight(flight.id)}
         >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="flex-1">
+            <div className="flex-1 max-md:w-full">
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-bold">{flight.airline}</span>
                 <span className="text-gray-500 text-sm">
@@ -178,17 +173,19 @@ export default function FlightList({
               </div>
             </div>
 
-            <div className="flex flex-col items-end">
-              <div className="text-lg font-bold">
-                {formatCurrency(flight.price)}
-              </div>
-              <div className="text-sm text-gray-500 mb-2">
-                {flight.cabin_class} • {flight.available_seats} seats left
+            <div className="flex max-md:w-full flex-row md:flex-col gap-x-3 justify-between items-center md:items-end">
+              <div className="flex flex-col items-start md:items-end">
+                <div className="text-lg font-bold">
+                  {formatCurrency(flight.price)}
+                </div>
+                <div className="text-sm text-gray-500 mb-2">
+                  {flight.cabin_class} • {flight.available_seats} seats left
+                </div>
               </div>
 
               <button
                 onClick={() => handleBookFlight(flight.id)}
-                className="px-4 py-2 cursor-pointer bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                className="px-2 py-1 md:px-4 md:py-2 cursor-pointer bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
               >
                 Select
               </button>
