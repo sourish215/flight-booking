@@ -86,7 +86,7 @@ export default function FlightSearchForm() {
                   value="one-way"
                   checked={searchParams.tripType === "one-way"}
                   onChange={handleInputChange}
-                  className="mr-2 accent-blue-600"
+                  className="mr-2 accent-blue-600 cursor-pointer"
                 />
                 <label htmlFor="one-way" className="text-gray-700 font-medium">
                   One Way
@@ -100,7 +100,7 @@ export default function FlightSearchForm() {
                   value="round-trip"
                   checked={searchParams.tripType === "round-trip"}
                   onChange={handleInputChange}
-                  className="mr-2 accent-blue-600"
+                  className="mr-2 accent-blue-600 cursor-pointer"
                 />
                 <label
                   htmlFor="round-trip"
@@ -112,7 +112,7 @@ export default function FlightSearchForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="origin"
@@ -155,8 +155,8 @@ export default function FlightSearchForm() {
           </div>
         </div>
 
-        <div className="flex-1">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="flex-1 md:mt-auto md:pb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="departureDate"
@@ -170,7 +170,7 @@ export default function FlightSearchForm() {
                 name="departureDate"
                 value={searchParams.departureDate}
                 onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
+                className="w-full cursor-pointer p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                 required
               />
             </div>
@@ -189,7 +189,8 @@ export default function FlightSearchForm() {
                   name="returnDate"
                   value={searchParams.returnDate || ""}
                   onChange={handleInputChange}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
+                  disabled={searchParams.departureDate === ""}
+                  className="w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                   required={searchParams.tripType === "round-trip"}
                 />
               </div>
@@ -211,7 +212,7 @@ export default function FlightSearchForm() {
             name="cabinClass"
             value={searchParams.cabinClass}
             onChange={handleInputChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 cursor-pointer"
           >
             <option value="Economy">Economy</option>
             <option value="Premium Economy">Premium Economy</option>
