@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/auth/AuthProvider";
+import PasswordInput from "@/components/auth/PasswordInput";
 
 export default function SignUp() {
   const { signUp } = useAuth();
@@ -112,21 +113,15 @@ export default function SignUp() {
               />
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
-              <p className="mt-1 text-sm">Must be at least 8 characters long</p>
-            </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              label="Password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
+            <p className="mt-1 text-sm">Must be at least 8 characters long</p>
           </div>
 
           <div>
