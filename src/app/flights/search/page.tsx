@@ -1,7 +1,7 @@
 // src/app/flights/search/page.tsx
 import { Suspense } from "react";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import FlightList from "@/components/flights/FlightList";
+import { createDirectSupabaseClient } from "@/lib/supabase/server";
+import FlightListWrapper from "@/components/flights/FlightListWrapper";
 import FlightSearchSkeleton from "@/components/flights/FlightSearchSkeleton";
 import { Flight } from "@/types/database.types";
 
@@ -21,7 +21,8 @@ type FlightSearchParams = {
 
 async function searchFlights(params: FlightSearchParams) {
   try {
-    const supabase = await createServerSupabaseClient();
+    // Use direct client instead of server component client to avoid cookie issues
+    const supabase = createDirectSupabaseClient();
 
     // Parse numeric values
     const adults = parseInt(params.adults) || 1;
@@ -219,7 +220,7 @@ async function FlightResultsContent({
       <section>
         <h2 className="text-xl font-semibold mb-4">Outbound Flights</h2>
         {outboundFlights.length > 0 ? (
-          <FlightList
+          <FlightListWrapper
             flights={outboundFlights}
             type="outbound"
             passengers={{
@@ -239,7 +240,7 @@ async function FlightResultsContent({
         <section>
           <h2 className="text-xl font-semibold mb-4">Return Flights</h2>
           {returnFlights.length > 0 ? (
-            <FlightList
+            <FlightListWrapper
               flights={returnFlights}
               type="return"
               passengers={{

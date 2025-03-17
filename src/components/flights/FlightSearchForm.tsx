@@ -1,8 +1,14 @@
 // src/components/flights/FlightSearchForm.tsx
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import AirportInput from "./AirportInput";
+
+type Airport = {
+  code: string;
+  name: string;
+};
 
 type SearchParams = {
   origin: string;
@@ -28,6 +34,31 @@ export default function FlightSearchForm() {
     cabinClass: "Economy",
     tripType: "one-way",
   });
+  const [airports, setAirports] = useState<Airport[]>([]);
+  const [isLoadingAirports, setIsLoadingAirports] = useState(true);
+
+  // Fetch airports on component mount
+  useEffect(() => {
+    const fetchAirports = async () => {
+      try {
+        setIsLoadingAirports(true);
+        const response = await fetch("/api/airports");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch airports");
+        }
+
+        const data = await response.json();
+        setAirports(data.airports || []);
+      } catch (error) {
+        console.error("Error fetching airports:", error);
+      } finally {
+        setIsLoadingAirports(false);
+      }
+    };
+
+    fetchAirports();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -113,45 +144,29 @@ export default function FlightSearchForm() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="origin"
-                className="block mb-1 text-gray-700 font-medium"
-              >
-                From
-              </label>
-              <input
-                type="text"
-                id="origin"
-                name="origin"
-                value={searchParams.origin}
-                onChange={handleInputChange}
-                placeholder="City or Airport"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
-                required
-              />
-              <span className="text-gray-500 text-sm">Eg: DEL, BLR, BOM</span>
-            </div>
+            <AirportInput
+              id="origin"
+              name="origin"
+              label="From"
+              value={searchParams.origin}
+              onChange={handleInputChange}
+              placeholder="City or Airport"
+              required={true}
+              airports={airports}
+              isLoading={isLoadingAirports}
+            />
 
-            <div>
-              <label
-                htmlFor="destination"
-                className="block mb-1 text-gray-700 font-medium"
-              >
-                To
-              </label>
-              <input
-                type="text"
-                id="destination"
-                name="destination"
-                value={searchParams.destination}
-                onChange={handleInputChange}
-                placeholder="City or Airport"
-                className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
-                required
-              />
-              <span className="text-gray-500 text-sm">Eg: DEL, BLR, BOM</span>
-            </div>
+            <AirportInput
+              id="destination"
+              name="destination"
+              label="To"
+              value={searchParams.destination}
+              onChange={handleInputChange}
+              placeholder="City or Airport"
+              required={true}
+              airports={airports}
+              isLoading={isLoadingAirports}
+            />
           </div>
         </div>
 
