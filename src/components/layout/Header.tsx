@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export default function Header() {
   const router = useRouter();
-  const { user, signOut, session } = useAuth();
+  const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
@@ -110,7 +110,7 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            {session && (
+            {user && (
               <Link
                 href="/bookings"
                 className="text-gray-600 hover:text-blue-600 transition-colors"
@@ -118,7 +118,7 @@ export default function Header() {
                 My Bookings
               </Link>
             )}
-            {session ? (
+            {user ? (
               <div className="flex items-center space-x-4">
                 <div className="relative group">
                   <button className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors">
@@ -177,7 +177,7 @@ export default function Header() {
             mobileMenuOpen ? "block" : "hidden"
           } mt-4 py-2 border-t border-gray-200`}
         >
-          {session && (
+          {user && (
             <Link
               href="/bookings"
               onClick={closeMobileMenu}
@@ -186,7 +186,7 @@ export default function Header() {
               My Bookings
             </Link>
           )}
-          {session ? (
+          {user ? (
             <>
               <div className="py-2 px-2 text-gray-600 font-medium border-b border-gray-100">
                 {user.email}
