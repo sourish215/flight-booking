@@ -84,13 +84,17 @@ export default function FlightList({
       return;
     }
 
-    setProcessingFlightId(flightId);
-    setIsRedirecting(true);
-
     try {
+      // Check session first before setting any state
       const {
         data: { session },
+        error: sessionError,
       } = await supabase.auth.getSession();
+
+      if (sessionError) {
+        console.error("Error checking session:", sessionError);
+        return;
+      }
 
       // Create booking parameters with current search params
       const currentUrl = new URL(window.location.href);
@@ -113,12 +117,21 @@ export default function FlightList({
         return;
       }
 
+      // Set processing state before checking profile
+      setProcessingFlightId(flightId);
+      setIsRedirecting(true);
+
       // Check if profile is complete
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("full_name")
         .eq("id", session.user.id)
         .single();
+
+      if (profileError) {
+        console.error("Error checking profile:", profileError);
+        return;
+      }
 
       if (!profile?.full_name) {
         // If profile incomplete, redirect to complete profile
