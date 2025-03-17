@@ -173,53 +173,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    // Clear local state immediately
-    setUser(null);
-    setSession(null);
+    try {
+      // First, clear the session
+      const { error: signOutError } = await supabase.auth.signOut();
+      if (signOutError) throw signOutError;
 
-    return new Promise<void>(async (resolve) => {
-      try {
-        // Try Supabase signOut but with a timeout to prevent hanging
-        const signOutPromise = supabase.auth.signOut();
+      // Clear any local state
+      setUser(null);
+      setSession(null);
 
-        // Create a timeout promise that resolves after 2 seconds
-        const timeoutPromise = new Promise<void>((timeoutResolve) => {
-          setTimeout(() => {
-            timeoutResolve();
-          }, 2000);
-        });
+      // Clear any stored data
+      if (typeof window !== "undefined") {
+        // Clear IndexedDB
+        const request = indexedDB.deleteDatabase("flightBookingDB");
+        request.onerror = (event) => {
+          console.error("Error clearing IndexedDB:", event);
+        };
 
-        // Race between the actual sign out and the timeout
-        await Promise.race([signOutPromise, timeoutPromise]);
+        // Clear localStorage
+        localStorage.clear();
 
-        // Clear any Supabase-related items from localStorage
-        if (typeof window !== "undefined") {
-          try {
-            // Find and remove all Supabase-related items
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-              const key = localStorage.key(i);
-              if (key && (key.includes("supabase") || key.includes("sb-"))) {
-                keysToRemove.push(key);
-              }
-            }
-
-            // Remove items we found
-            keysToRemove.forEach((key) => {
-              localStorage.removeItem(key);
-            });
-          } catch (e) {
-            console.warn("Error clearing localStorage:", e);
-          }
-        }
-
-        resolve();
-      } catch (err) {
-        console.error("Sign out error:", err);
-        // Resolve anyway to avoid hanging
-        resolve();
+        // Clear sessionStorage
+        sessionStorage.clear();
       }
-    });
+
+      // Force a hard reload to clear any cached state
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error signing out:", error);
+      throw error;
+    }
   };
 
   return (
