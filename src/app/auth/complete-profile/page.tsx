@@ -138,6 +138,10 @@ export default function CompleteProfile() {
       // Redirect to the original destination
       console.log("Redirecting to:", redirectTo);
       router.replace(redirectTo);
+      router.refresh();
+      setTimeout(() => {
+        window.location.reload(); // Force a full page refresh
+      }, 100);
     } catch (err) {
       console.error("Error updating profile:", err);
       setError(err instanceof Error ? err.message : "Failed to update profile");
