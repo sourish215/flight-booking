@@ -31,6 +31,17 @@ export default function FlightList({
   const { loading: authLoading } = useAuth();
   const [selectedFlight, setSelectedFlight] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [processingFlightId, setProcessingFlightId] = useState<string | null>(
+    null
+  );
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize component after auth loading is complete
+  useEffect(() => {
+    if (!authLoading) {
+      setIsInitialized(true);
+    }
+  }, [authLoading]);
 
   // Setup IndexedDB for offline caching
   useEffect(() => {
@@ -65,8 +76,16 @@ export default function FlightList({
     setSelectedFlight(flightId);
   };
 
-  const handleBookFlight = async (flightId: string) => {
-    if (isRedirecting || authLoading) return;
+  const handleBookFlight = async (flightId: string, e: React.MouseEvent) => {
+    // Stop event propagation to prevent triggering parent's onClick
+    e.stopPropagation();
+
+    // Don't proceed if component is not initialized or already processing
+    if (!isInitialized || processingFlightId === flightId || isRedirecting) {
+      return;
+    }
+
+    setProcessingFlightId(flightId);
     setIsRedirecting(true);
 
     try {
@@ -117,6 +136,7 @@ export default function FlightList({
       console.error("Error during booking:", error);
     } finally {
       setIsRedirecting(false);
+      setProcessingFlightId(null);
     }
   };
 
@@ -184,8 +204,11 @@ export default function FlightList({
               </div>
 
               <button
-                onClick={() => handleBookFlight(flight.id)}
-                className="px-2 py-1 md:px-4 md:py-2 cursor-pointer bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                onClick={(e) => handleBookFlight(flight.id, e)}
+                disabled={!isInitialized}
+                className={`px-2 py-1 md:px-4 md:py-2 cursor-pointer bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors ${
+                  !isInitialized ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
                 Select
               </button>
