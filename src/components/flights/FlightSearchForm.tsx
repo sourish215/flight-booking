@@ -24,10 +24,14 @@ type SearchParams = {
 
 export default function FlightSearchForm() {
   const router = useRouter();
+
+  // Get today's date in YYYY-MM-DD format for min attribute
+  const today = new Date().toISOString().split("T")[0];
+
   const [searchParams, setSearchParams] = useState<SearchParams>({
     origin: "",
     destination: "",
-    departureDate: "",
+    departureDate: today,
     adults: 1,
     children: 0,
     infants: 0,
@@ -60,10 +64,51 @@ export default function FlightSearchForm() {
     fetchAirports();
   }, []);
 
+  // Update return date if it becomes invalid when departure date changes
+  useEffect(() => {
+    if (searchParams.returnDate && searchParams.departureDate) {
+      const returnDate = new Date(searchParams.returnDate);
+      const departureDate = new Date(searchParams.departureDate);
+
+      if (returnDate < departureDate) {
+        setSearchParams((prev) => ({
+          ...prev,
+          returnDate: searchParams.departureDate,
+        }));
+      }
+    }
+  }, [searchParams.departureDate, searchParams.returnDate]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
+    // Special handling for date fields to prevent past dates
+    if ((name === "departureDate" || name === "returnDate") && value) {
+      const selectedDate = new Date(value);
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0); // Reset time part for accurate date comparison
+
+      // If selected date is in the past, use today's date instead
+      if (selectedDate < currentDate) {
+        setSearchParams((prev) => ({ ...prev, [name]: today }));
+        return;
+      }
+
+      // For return date, ensure it's not before departure date
+      if (name === "returnDate" && searchParams.departureDate) {
+        const departureDate = new Date(searchParams.departureDate);
+        if (selectedDate < departureDate) {
+          setSearchParams((prev) => ({
+            ...prev,
+            [name]: searchParams.departureDate,
+          }));
+          return;
+        }
+      }
+    }
+
     setSearchParams((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -185,6 +230,7 @@ export default function FlightSearchForm() {
                 name="departureDate"
                 value={searchParams.departureDate}
                 onChange={handleInputChange}
+                min={today}
                 className="w-full cursor-pointer p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                 required
               />
@@ -204,6 +250,7 @@ export default function FlightSearchForm() {
                   name="returnDate"
                   value={searchParams.returnDate || ""}
                   onChange={handleInputChange}
+                  min={searchParams.departureDate || today}
                   disabled={searchParams.departureDate === ""}
                   className="w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                   required={searchParams.tripType === "round-trip"}
