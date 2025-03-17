@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -55,54 +55,8 @@ export default function BookingsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [authVerified, setAuthVerified] = useState(false);
 
-  // Enhanced function to verify authentication status
-  const verifyAuth = async () => {
-    console.log("Verifying auth status...");
-    try {
-      if (!user) {
-        console.log("No user in AuthContext, checking Supabase session...");
-        // Double-check with Supabase directly
-        const supabase = createClientComponentClient();
-        const { data, error: sessionError } = await supabase.auth.getSession();
-
-        if (sessionError) {
-          console.error("Error getting session:", sessionError);
-          throw new Error("Failed to verify authentication status");
-        }
-
-        if (data.session) {
-          console.log(
-            "Session found in Supabase but not in AuthContext, waiting for sync...",
-            data.session
-          );
-          // Give AuthContext some time to sync
-          setTimeout(() => {
-            setAuthVerified(true);
-            fetchBookings();
-          }, 1000);
-          return;
-        } else {
-          console.log("No session found in Supabase either");
-          setError("Please sign in to view your bookings");
-          setAuthVerified(true);
-          setLoading(false);
-          return;
-        }
-      }
-
-      console.log("User is authenticated:", user.id);
-      setAuthVerified(true);
-      fetchBookings();
-    } catch (err) {
-      console.error("Error verifying authentication:", err);
-      setError("Error verifying authentication. Please try again.");
-      setAuthVerified(true);
-      setLoading(false);
-    }
-  };
-
   // Function to fetch bookings
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     if (!user) {
       setError("Please sign in to view your bookings");
       setLoading(false);
@@ -149,14 +103,60 @@ export default function BookingsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, setError, setLoading, setBookings]);
+
+  // Enhanced function to verify authentication status
+  const verifyAuth = useCallback(async () => {
+    console.log("Verifying auth status...");
+    try {
+      if (!user) {
+        console.log("No user in AuthContext, checking Supabase session...");
+        // Double-check with Supabase directly
+        const supabase = createClientComponentClient();
+        const { data, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError) {
+          console.error("Error getting session:", sessionError);
+          throw new Error("Failed to verify authentication status");
+        }
+
+        if (data.session) {
+          console.log(
+            "Session found in Supabase but not in AuthContext, waiting for sync...",
+            data.session
+          );
+          // Give AuthContext some time to sync
+          setTimeout(() => {
+            setAuthVerified(true);
+            fetchBookings();
+          }, 1000);
+          return;
+        } else {
+          console.log("No session found in Supabase either");
+          setError("Please sign in to view your bookings");
+          setAuthVerified(true);
+          setLoading(false);
+          return;
+        }
+      }
+
+      console.log("User is authenticated:", user.id);
+      setAuthVerified(true);
+      fetchBookings();
+    } catch (err) {
+      console.error("Error verifying authentication:", err);
+      setError("Error verifying authentication. Please try again.");
+      setAuthVerified(true);
+      setLoading(false);
+    }
+  }, [user, fetchBookings, setAuthVerified, setError, setLoading]);
 
   // Wait for auth to load, then verify auth status
   useEffect(() => {
     if (!authLoading) {
       verifyAuth();
     }
-  }, [authLoading, user]);
+  }, [authLoading, user, verifyAuth]);
 
   const filteredBookings = useMemo(() => {
     const filteredBookings = bookings.filter((booking) => {
