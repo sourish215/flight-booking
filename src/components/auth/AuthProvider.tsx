@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { User, Session, SupabaseClient } from "@supabase/supabase-js";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import { isClient } from "@/lib/utils/client-utils";
+import LoaderOverlay from "@/components/ui/LoaderOverlay";
 
 type AuthContextType = {
   user: User | null;
@@ -22,6 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [serverTimestamp, setServerTimestamp] = useState<string | null>(null);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const supabase = createSupabaseClient();
 
   // Fetch server timestamp on mount
@@ -173,6 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    setIsSigningOut(true);
     try {
       // First, clear the session
       const { error: signOutError } = await supabase.auth.signOut();
@@ -201,6 +204,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       window.location.href = "/";
     } catch (error) {
       console.error("Error signing out:", error);
+      setIsSigningOut(false);
       throw error;
     }
   };
@@ -210,6 +214,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{ user, session, loading, supabase, signIn, signUp, signOut }}
     >
       {children}
+      {isSigningOut && <LoaderOverlay message="Signing out..." />}
     </AuthContext.Provider>
   );
 }
