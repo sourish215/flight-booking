@@ -4,6 +4,7 @@
 import { useState, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import AirportInput from "./AirportInput";
+import { getTodayDate, isClient } from "@/lib/utils/client-utils";
 
 type Airport = {
   code: string;
@@ -25,21 +26,57 @@ type SearchParams = {
 export default function FlightSearchForm() {
   const router = useRouter();
 
-  // Get today's date in YYYY-MM-DD format for min attribute
-  const today = new Date().toISOString().split("T")[0];
+  // Get initial date from our utility function
+  const initialDate = getTodayDate();
+
+  // State to track if we've initialized with server date
+  const [isDateInitialized, setIsDateInitialized] = useState(false);
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
     origin: "",
     destination: "",
-    departureDate: today,
+    departureDate: initialDate,
     adults: 1,
     children: 0,
     infants: 0,
     cabinClass: "Economy",
     tripType: "one-way",
   });
+
   const [airports, setAirports] = useState<Airport[]>([]);
   const [isLoadingAirports, setIsLoadingAirports] = useState(true);
+
+  // Fetch the latest date from server and update if needed
+  useEffect(() => {
+    // Only run this effect on the client
+    if (!isClient) return;
+
+    // Fetch the latest date from the API
+    const fetchServerDate = async () => {
+      try {
+        const response = await fetch("/api/date");
+        if (!response.ok) {
+          throw new Error("Failed to fetch date from server");
+        }
+
+        const data = await response.json();
+        const serverDate = data.date;
+
+        // Update the departure date if it hasn't been changed by the user
+        if (!isDateInitialized) {
+          setSearchParams((prev) => ({
+            ...prev,
+            departureDate: serverDate,
+          }));
+          setIsDateInitialized(true);
+        }
+      } catch (error) {
+        console.error("Error fetching server date:", error);
+      }
+    };
+
+    fetchServerDate();
+  }, [isDateInitialized]);
 
   // Fetch airports on component mount
   useEffect(() => {
@@ -87,12 +124,11 @@ export default function FlightSearchForm() {
     // Special handling for date fields to prevent past dates
     if ((name === "departureDate" || name === "returnDate") && value) {
       const selectedDate = new Date(value);
-      const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); // Reset time part for accurate date comparison
+      const currentDate = new Date(initialDate);
 
       // If selected date is in the past, use today's date instead
       if (selectedDate < currentDate) {
-        setSearchParams((prev) => ({ ...prev, [name]: today }));
+        setSearchParams((prev) => ({ ...prev, [name]: initialDate }));
         return;
       }
 
@@ -230,7 +266,7 @@ export default function FlightSearchForm() {
                 name="departureDate"
                 value={searchParams.departureDate}
                 onChange={handleInputChange}
-                min={today}
+                min={initialDate}
                 className="w-full cursor-pointer p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                 required
               />
@@ -250,7 +286,7 @@ export default function FlightSearchForm() {
                   name="returnDate"
                   value={searchParams.returnDate || ""}
                   onChange={handleInputChange}
-                  min={searchParams.departureDate || today}
+                  min={searchParams.departureDate || initialDate}
                   disabled={searchParams.departureDate === ""}
                   className="w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
                   required={searchParams.tripType === "round-trip"}

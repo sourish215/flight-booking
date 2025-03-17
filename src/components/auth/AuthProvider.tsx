@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { createSupabaseClient } from "@/lib/supabase/client";
+import { isClient } from "@/lib/utils/client-utils";
 
 type AuthContextType = {
   user: User | null;
@@ -19,7 +20,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [serverTimestamp, setServerTimestamp] = useState<string | null>(null);
   const supabase = createSupabaseClient();
+
+  // Fetch server timestamp on mount
+  useEffect(() => {
+    if (!isClient) return;
+
+    const fetchServerTimestamp = async () => {
+      try {
+        const response = await fetch("/api/date");
+        if (!response.ok) {
+          throw new Error("Failed to fetch server timestamp");
+        }
+
+        const data = await response.json();
+        setServerTimestamp(data.timestamp);
+      } catch (error) {
+        console.error("Error fetching server timestamp:", error);
+      }
+    };
+
+    fetchServerTimestamp();
+  }, []);
 
   useEffect(() => {
     // Get initial session
@@ -110,6 +133,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       `${baseUrl}/auth/complete-profile`
     );
 
+    // Get a consistent timestamp for signup
+    const timestamp = serverTimestamp || new Date().toISOString();
+
     // Sign up the user with email verification
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -118,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         emailRedirectTo: `${baseUrl}/auth/complete-profile`,
         data: {
           email: email,
-          signup_timestamp: new Date().toISOString(),
+          signup_timestamp: timestamp,
         },
       },
     });

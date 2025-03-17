@@ -1,6 +1,36 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { getCurrentYear, isClient } from "@/lib/utils/client-utils";
 
 export default function Footer() {
+  const [year, setYear] = useState(getCurrentYear()); // Safe initial value
+
+  useEffect(() => {
+    // Only run this effect on the client
+    if (!isClient) return;
+
+    // Fetch the latest year from the API
+    const fetchServerYear = async () => {
+      try {
+        const response = await fetch("/api/date");
+        if (!response.ok) {
+          throw new Error("Failed to fetch server year");
+        }
+
+        const data = await response.json();
+        setYear(data.year);
+      } catch (error) {
+        console.error("Error fetching server year:", error);
+        // Fallback to client-side year if API fails
+        setYear(getCurrentYear());
+      }
+    };
+
+    fetchServerYear();
+  }, []);
+
   return (
     <footer className="bg-gray-800 text-white py-8">
       <div className="container mx-auto px-4">
@@ -47,9 +77,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-300">
-          <p>
-            &copy; {new Date().getFullYear()} FlightBooker. All rights reserved.
-          </p>
+          <p>&copy; {year} FlightBooker. All rights reserved.</p>
         </div>
       </div>
     </footer>
