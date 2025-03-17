@@ -3,7 +3,6 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Flight } from "@/types/database.types";
 import { useAuth } from "@/components/auth/AuthProvider";
 
@@ -45,8 +44,7 @@ export default function NewBookingPage() {
 function BookingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, session, loading: authLoading } = useAuth();
-  const supabase = createClientComponentClient();
+  const { user, session, loading: authLoading, supabase } = useAuth();
 
   const [flight, setFlight] = useState<Flight | null>(null);
   const [loading, setLoading] = useState(true);

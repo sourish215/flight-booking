@@ -10,7 +10,6 @@ import {
   formatCurrency,
 } from "@/lib/utils/formatters";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { createSupabaseClient } from "@/lib/supabase/client";
 
 type FlightListProps = {
   flights: Flight[];
@@ -28,7 +27,7 @@ export default function FlightList({
   passengers,
 }: FlightListProps) {
   const router = useRouter();
-  const { loading: authLoading } = useAuth();
+  const { loading: authLoading, supabase } = useAuth();
   const [selectedFlight, setSelectedFlight] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [processingFlightId, setProcessingFlightId] = useState<string | null>(
@@ -89,7 +88,6 @@ export default function FlightList({
     setIsRedirecting(true);
 
     try {
-      const supabase = createSupabaseClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
