@@ -77,8 +77,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string) => {
-    // Get the base URL based on environment
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    // Determine the base URL based on environment
+    let baseUrl: string;
+
+    // In development, use localhost
+    if (process.env.NODE_ENV === "development") {
+      baseUrl =
+        typeof window !== "undefined"
+          ? window.location.origin
+          : "http://localhost:3000";
+    }
+    // In production, use the configured site URL
+    else {
+      baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+
+      // If no site URL is configured in production, try to use window.location.origin
+      if (!baseUrl && typeof window !== "undefined") {
+        baseUrl = window.location.origin;
+      }
+
+      // If we still don't have a baseUrl in production, that's a configuration error
+      if (!baseUrl) {
+        console.error("No NEXT_PUBLIC_SITE_URL set in production environment");
+        throw new Error(
+          "Server configuration error. Please contact support or try again later."
+        );
+      }
+    }
+
+    console.log(
+      `Using redirect URL (${process.env.NODE_ENV}):`,
+      `${baseUrl}/auth/complete-profile`
+    );
 
     // Sign up the user with email verification
     const { data, error } = await supabase.auth.signUp({
