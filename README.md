@@ -11,6 +11,65 @@ FlightBooker is a modern web application for booking flight tickets online. It p
 - **Flight Search**: Search for flights based on origin, destination, date, and passenger count
 - **Booking Management**: View and manage your flight bookings
 - **Responsive Design**: Optimized experience across desktop, tablet, and mobile devices
+- **Dark Mode Support**: Support for dark mode
+
+## Available Flight Routes
+
+### Origins
+
+- Ahmedabad, India (AMD)
+- Bangalore, India (BLR)
+- Bangkok, Thailand (BKK)
+- Chennai, India (MAA)
+- Delhi, India (DEL)
+- Dubai, UAE (DXB)
+- Goa, India (GOI)
+- Hong Kong (HKG)
+- Hyderabad, India (HYD)
+- Jaipur, India (JAI)
+- Kochi, India (COK)
+- Kolkata, India (CCU)
+- Kuala Lumpur, Malaysia (KUL)
+- London, UK (LHR)
+- Lucknow, India (LKO)
+- Mumbai, India (BOM)
+- New York, USA (JFK)
+- Paris, France (CDG)
+- Pune, India (PNQ)
+- San Francisco, USA (SFO)
+- Singapore (SIN)
+- Sydney, Australia (SYD)
+- Tokyo, Japan (NRT)
+- Toronto, Canada (YYZ)
+- Udaipur, India (UDR)
+
+### Destinations
+
+- Ahmedabad, India (AMD)
+- Bangalore, India (BLR)
+- Bangkok, Thailand (BKK)
+- Chennai, India (MAA)
+- Delhi, India (DEL)
+- Dubai, UAE (DXB)
+- Goa, India (GOI)
+- Hong Kong (HKG)
+- Hyderabad, India (HYD)
+- Jaipur, India (JAI)
+- Kochi, India (COK)
+- Kolkata, India (CCU)
+- Kuala Lumpur, Malaysia (KUL)
+- London, UK (LHR)
+- Lucknow, India (LKO)
+- Mumbai, India (BOM)
+- New York, USA (JFK)
+- Paris, France (CDG)
+- Pune, India (PNQ)
+- San Francisco, USA (SFO)
+- Singapore (SIN)
+- Sydney, Australia (SYD)
+- Tokyo, Japan (NRT)
+- Toronto, Canada (YYZ)
+- Udaipur, India (UDR)
 
 ## Technology Stack
 
