@@ -201,7 +201,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Force a hard reload to clear any cached state
-      window.location.href = "/";
+      // window.location.href = "/";
+      window.location.replace(window.location.href);
     } catch (error) {
       console.error("Error signing out:", error);
       setIsSigningOut(false);
