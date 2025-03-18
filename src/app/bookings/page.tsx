@@ -417,7 +417,7 @@ export default function BookingsPage() {
                   <div className="sm:col-span-2">
                     <div className="text-sm">Total Price</div>
                     <div className="text-xl font-bold">
-                      ${parseFloat(booking.total_price).toFixed(2)}
+                      ₹{parseFloat(booking.total_price).toFixed(2)}
                     </div>
                   </div>
                 </div>

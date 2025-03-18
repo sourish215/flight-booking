@@ -253,7 +253,7 @@ function BookingContent() {
             <span className="font-medium">Class:</span> {flight.cabin_class}
           </p>
           <p>
-            <span className="font-medium">Price per person:</span> $
+            <span className="font-medium">Price per person:</span> ₹
             {flight.price}
           </p>
         </div>
@@ -324,7 +324,7 @@ function BookingContent() {
                 Total Passengers: {passengers.length}
               </p>
               <p className="text-2xl text-gray-600 font-bold">
-                Total Price: $
+                Total Price: ₹
                 {flight.price *
                   (passengerCount.adults + passengerCount.children)}
               </p>

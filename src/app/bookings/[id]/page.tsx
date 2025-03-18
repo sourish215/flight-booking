@@ -169,7 +169,7 @@ async function BookingDetails({ bookingId }: { bookingId: string }) {
           <div>
             <span className="text-gray-600">Total Price:</span>
             <span className="ml-2 text-gray-600 text-2xl font-bold">
-              $
+              ₹
               {Number(booking.total_price).toLocaleString("en-US", {
                 minimumFractionDigits: 2,
               })}
