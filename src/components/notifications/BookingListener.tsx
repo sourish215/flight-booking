@@ -49,7 +49,8 @@ export default function BookingListener() {
 
             // Refresh the bookings page if we're on it
             if (window.location.pathname.includes("/bookings")) {
-              router.refresh();
+              // Force a page reload
+              window.location.reload();
             }
           } else {
             console.log(
