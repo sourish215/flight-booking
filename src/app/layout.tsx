@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BookingListener from "@/components/notifications/BookingListener";
+import ToastProvider from "@/components/notifications/ToastProvider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -22,12 +24,14 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <body>
         <AuthProvider>
+          <ToastProvider />
           <div className="min-h-screen flex flex-col">
             <Header />
             <main className="flex-grow container mx-auto px-4 py-8">
               {children}
             </main>
             <Footer />
+            <BookingListener />
           </div>
         </AuthProvider>
       </body>
