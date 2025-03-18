@@ -10,8 +10,10 @@ FlightBooker is a modern web application for booking flight tickets online. It p
 - **Profile Management**: User profile creation and management
 - **Flight Search**: Search for flights based on origin, destination, date, and passenger count
 - **Booking Management**: View and manage your flight bookings
+- **Real-time Notifications**: Instant notifications when booking status changes
+- **Automated Status Updates**: A cron job runs every 5 minutes to update booking statuses
 - **Responsive Design**: Optimized experience across desktop, tablet, and mobile devices
-- **Dark Mode Support**: Support for dark mode
+- **System-based Theme**: Automatically adapts to user's system dark/light mode preference
 
 ## Available Flight Routes
 
@@ -74,8 +76,10 @@ FlightBooker is a modern web application for booking flight tickets online. It p
 ## Technology Stack
 
 - **Frontend**: Next.js, React, Tailwind CSS
-- **Backend**: Supabase (Authentication, Database)
+- **Backend**: Supabase (Authentication, Database, Real-time)
 - **State Management**: React Context API
+- **Notifications**: Sonner toast notifications
+- **Automation**: GitHub Actions for scheduled tasks
 - **Styling**: Tailwind CSS for responsive design
 
 ## Getting Started
@@ -115,3 +119,22 @@ To learn more about Next.js, take a look at the following resources:
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Booking System
+
+FlightBooker features a sophisticated booking system with the following workflow:
+
+1. **Booking Creation**: When a user books a flight, the booking is initially set to "pending" status
+2. **Automated Updates**: A cron job runs every 5 minutes (implemented via GitHub Actions) to check for pending bookings older than 45 seconds and updates them to "confirmed" status
+3. **Real-time Notifications**: When a booking status changes to "confirmed", the user receives an instant notification in their browser
+4. **Booking Management**: Users can view all their bookings and check status details
+
+## Notifications System
+
+The application uses a real-time notification system powered by:
+
+- **Supabase Real-time**: Listens for changes to the bookings table
+- **Sonner**: Modern toast notification library for displaying alerts
+- **Client-side Listener**: A dedicated component that subscribes to booking updates for the authenticated user
+
+This ensures users receive immediate feedback when their booking status changes without requiring page refreshes.
