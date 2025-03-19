@@ -15,6 +15,26 @@ FlightBooker is a modern web application for booking flight tickets online. It p
 - **Responsive Design**: Optimized experience across desktop, tablet, and mobile devices
 - **System-based Theme**: Automatically adapts to user's system dark/light mode preference
 
+## Flight Search Inputs That Should Return Results
+
+1. **From: CCU to DEL (One Way)**
+
+   - Departure: April 15, 2025
+   - Passengers: 1 Adult
+   - Class: Economy
+
+2. **From: UDR to DEL (One Way)**
+
+   - Departure: October 5, 2025
+   - Passengers: 1 Adult
+   - Class: Economy
+
+3. **From: DEL to CCU (Round Trip)**
+   - Departure: April 14, 2025
+   - Return: April 15, 2025
+   - Passengers: 1 Adult
+   - Class: Economy
+
 ## Available Flight Routes
 
 ### Origins
